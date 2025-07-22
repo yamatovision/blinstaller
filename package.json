@@ -15,7 +15,10 @@
     "postinstall": "electron-builder install-app-deps"
   },
   "keywords": ["bluelamp", "installer", "ai", "japanese"],
-  "author": "BlueLamp Team",
+  "author": {
+    "name": "BlueLamp Team",
+    "email": "support@bluelamp.ai"
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.0.0",
