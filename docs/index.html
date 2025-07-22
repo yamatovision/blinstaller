@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlueLamp Installer ダウンロード</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 18px;
+        }
+
+        .os-detection {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .os-detection h3 {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .detected-os {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .download-section {
+            margin-bottom: 40px;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .download-size {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .other-downloads {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 1px solid #eee;
+        }
+
+        .other-downloads h3 {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 18px;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .download-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.2s ease;
+        }
+
+        .download-item:hover {
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }
+
+        .download-item-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .download-item-name {
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .download-item-format {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .requirements {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .requirements h4 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .requirements ul {
+            color: #856404;
+            margin-left: 20px;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #dc3545;
+            margin-top: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">💡</div>
+        <h1>BlueLamp Installer</h1>
+        <p class="subtitle">BlueLamp AIを簡単にインストール</p>
+
+        <div class="os-detection">
+            <h3>検出されたOS</h3>
+            <div class="detected-os" id="detected-os">
+                <div class="loader"></div>
+                <span>検出中...</span>
+            </div>
+        </div>
+
+        <div class="download-section" id="main-download">
+            <!-- 動的に生成 -->
+        </div>
+
+        <div class="other-downloads">
+            <h3>他のOS向けダウンロード</h3>
+            <div class="download-grid" id="other-downloads">
+                <!-- 動的に生成 -->
+            </div>
+        </div>
+
+        <div class="requirements">
+            <h4>⚠️ システム要件</h4>
+            <ul>
+                <li>Python 3.12以上</li>
+                <li>1GB以上の空きディスク容量</li>
+                <li>インターネット接続</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // ダウンロードリンク設定（実際のURLに置き換えてください）
+        const DOWNLOADS = {
+            windows: {
+                name: 'Windows',
+                icon: '🪟',
+                downloads: [
+                    {
+                        format: 'ポータブル版 (.zip)',
+                        size: '99.5MB',
+                        url: 'https://github.com/yamatovision/blinstaller/releases/download/v1.0.0/BlueLamp.Installer-1.0.0-win.zip',
+                        primary: true
+                    },
+                    {
+                        format: 'ポータブル版 (.zip) - 予備',
+                        size: '99.5MB',
+                        url: 'https://github.com/yamatovision/blinstaller/releases/download/v1.0.0/BlueLamp.Installer-1.0.0-win.zip'
+                    }
+                ]
+            },
+            mac: {
+                name: 'macOS',
+                icon: '🍎',
+                downloads: [
+                    {
+                        format: 'Apple Silicon版 (.zip)',
+                        size: '86.8MB',
+                        url: 'https://github.com/yamatovision/blinstaller/releases/download/v1.0.0/BlueLamp.Installer-1.0.0-arm64-mac.zip',
+                        primary: true
+                    },
+                    {
+                        format: 'Intel Mac版 (.zip)',
+                        size: '91.7MB',
+                        url: 'https://github.com/yamatovision/blinstaller/releases/download/v1.0.0/BlueLamp.Installer-1.0.0-mac.zip'
+                    }
+                ]
+            },
+            linux: {
+                name: 'Linux',
+                icon: '🐧',
+                downloads: [
+                    {
+                        format: 'AppImage',
+                        size: '99.7MB',
+                        url: 'https://github.com/yamatovision/blinstaller/releases/download/v1.0.0/BlueLamp.Installer-1.0.0.AppImage',
+                        primary: true
+                    },
+                    {
+                        format: 'Debian/Ubuntu (.deb) - 準備中',
+                        size: 'TBD',
+                        url: '#'
+                    }
+                ]
+            }
+        };
+
+        // OS検出
+        function detectOS() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const platform = navigator.platform.toLowerCase();
+
+            if (userAgent.includes('win')) {
+                return 'windows';
+            } else if (userAgent.includes('mac') || platform.includes('mac')) {
+                return 'mac';
+            } else if (userAgent.includes('linux')) {
+                return 'linux';
+            }
+            return 'unknown';
+        }
+
+        // メインダウンロードボタンを表示
+        function showMainDownload(os) {
+            const mainDownloadEl = document.getElementById('main-download');
+            const osData = DOWNLOADS[os];
+
+            if (!osData) {
+                mainDownloadEl.innerHTML = `
+                    <p class="error">お使いのOSは自動検出できませんでした。<br>下記から手動で選択してください。</p>
+                `;
+                return;
+            }
+
+            const primaryDownload = osData.downloads.find(d => d.primary);
+            
+            mainDownloadEl.innerHTML = `
+                <a href="${primaryDownload.url}" class="download-btn" download>
+                    <span>${osData.icon}</span>
+                    <span>${osData.name}版をダウンロード</span>
+                </a>
+                <div class="download-size">${primaryDownload.format} • ${primaryDownload.size}</div>
+            `;
+        }
+
+        // 他のOSのダウンロードを表示
+        function showOtherDownloads(detectedOs) {
+            const otherDownloadsEl = document.getElementById('other-downloads');
+            let html = '';
+
+            Object.entries(DOWNLOADS).forEach(([os, data]) => {
+                if (os !== detectedOs) {
+                    const primaryDownload = data.downloads.find(d => d.primary);
+                    html += `
+                        <a href="${primaryDownload.url}" class="download-item" download>
+                            <div class="download-item-icon">${data.icon}</div>
+                            <div class="download-item-name">${data.name}</div>
+                            <div class="download-item-format">${primaryDownload.format}</div>
+                        </a>
+                    `;
+                }
+            });
+
+            otherDownloadsEl.innerHTML = html;
+        }
+
+        // 初期化
+        function init() {
+            const os = detectOS();
+            const detectedOsEl = document.getElementById('detected-os');
+            
+            if (os === 'unknown') {
+                detectedOsEl.innerHTML = `
+                    <span>⚠️</span>
+                    <span>不明なOS</span>
+                `;
+            } else {
+                const osData = DOWNLOADS[os];
+                detectedOsEl.innerHTML = `
+                    <span>${osData.icon}</span>
+                    <span>${osData.name}</span>
+                `;
+            }
+
+            showMainDownload(os);
+            showOtherDownloads(os);
+        }
+
+        // ページ読み込み時に実行
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
